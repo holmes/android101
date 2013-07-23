@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+  <!--
+    - The image view where the merchant's image is displayed. We use a custom subclass of ImageView
+    - which maintains a square aspect ratio.
+    -->
+  <com.example.android101.util.SquaredImageView
+      android:id="@+id/merchant_image"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      />
+  <!--
+    - This is where we will store the merchant name. Unlike the other views, this one has a height
+    - of wrap_content so that it only occupies the height of the contained text. We use
+    - 'layout_gravity' attribute to pull it to the bottom of the view. The 'gravity' attribute
+    - controls the position of the text inside of the view which we put in the center.
+    -->
+  <TextView
+      android:id="@+id/merchant_name"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom"
+      android:gravity="center"
+      android:padding="8dp"
+      android:textColor="#fff"
+      android:background="#a000"
+      />
+</FrameLayout>

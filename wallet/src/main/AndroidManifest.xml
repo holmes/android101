@@ -14,6 +14,9 @@
       android:minSdkVersion="14"
       android:targetSdkVersion="17"/>
 
+  <!-- API calls and images go across the internet. -->
+  <uses-permission android:name="android.permission.INTERNET"/>
+
   <!--
     - A single 'application' tag provides information about the app. Here we define the
     - name (as it appears in the Play store), the icon, and the general theme.

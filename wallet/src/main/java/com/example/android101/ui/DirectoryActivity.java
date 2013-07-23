@@ -1,6 +1,8 @@
 package com.example.android101.ui;
 
 import android.os.Bundle;
+import android.widget.GridView;
+import com.example.android101.R;
 import com.example.android101.WalletActivity;
 
 /**
@@ -25,6 +27,12 @@ public class DirectoryActivity extends WalletActivity {
     // need to check that here and bail because they are being shuffled to the login screen.
     if (isFinishing()) return;
 
-    // TODO All the things!
+    // Inflate the layout for the directory.
+    setContentView(R.layout.directory_activity);
+
+    // Find the GridView we created which is going to hold the merchants images.
+    GridView merchants = (GridView) findViewById(R.id.merchants);
+    // Give it an adapter which binds the mock data to the individual merchant view.
+    merchants.setAdapter(new MerchantAdapter(this));
   }
 }
