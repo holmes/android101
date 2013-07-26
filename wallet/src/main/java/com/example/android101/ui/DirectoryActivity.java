@@ -1,9 +1,21 @@
 package com.example.android101.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import com.example.android101.R;
 import com.example.android101.WalletActivity;
+import com.example.android101.data.WalletService;
+import com.example.android101.data.model.User;
+import com.example.android101.data.response.DirectoryMerchantResponse;
+import com.google.gson.Gson;
+import java.util.List;
+import javax.inject.Inject;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Activities are high-level screens in an app. Similar to pages on a website. Content
@@ -15,6 +27,11 @@ import com.example.android101.WalletActivity;
  * forking over their cash.
  */
 public class DirectoryActivity extends WalletActivity {
+
+  // Dagger automatically sets these values. Injection is performed automatically in WalletActivity.
+  @Inject Gson gson;
+  @Inject WalletService service;
+
   /**
    * Android has a managed lifecycle. The operating system creates and destroys things as the user
    * moves throughout the app. We get callbacks at various states. "onCreate" is the first.
@@ -32,7 +49,51 @@ public class DirectoryActivity extends WalletActivity {
 
     // Find the GridView we created which is going to hold the merchants images.
     GridView merchants = (GridView) findViewById(R.id.merchants);
-    // Give it an adapter which binds the mock data to the individual merchant view.
-    merchants.setAdapter(new MerchantAdapter(this));
+    // Give it an adapter which binds the mock data to the individual merchant view. This is stored
+    // in a local variable that's final so that we can access it in the click listener and Retrofit
+    // callback down below.
+    final MerchantAdapter adapter = new MerchantAdapter(this);
+    merchants.setAdapter(adapter);
+
+
+    // Call the server for a list of up to 30 merchants. Retrofit will automatically perform this
+    // on a background thread and
+    service.listMerchants(30, new Callback<DirectoryMerchantResponse>() {
+      @Override
+      public void success(DirectoryMerchantResponse directoryMerchantResponse, Response response) {
+        List<User> users = directoryMerchantResponse.entities;
+        // Update the adapter using the user list from the response object.
+        adapter.setUsers(users);
+        // Tell the adapter to notify any views that they need to refresh. This will cause our
+        // GridView to re-query the adapter and display the new data.
+        adapter.notifyDataSetChanged();
+      }
+
+      @Override public void failure(RetrofitError retrofitError) {
+        // This will never happen! Right? Right...
+      }
+    });
+
+    // The click listener allows us to respond to the user clicking on a merchant in the grid.
+    merchants.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+      @Override
+      public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        // Get the user at the position that was clicked.
+        User user = adapter.getItem(position);
+        // Using Gson, turn that user object into a JSON string.
+        String userString = gson.toJson(user);
+
+        // Create an intent from the current activity to MerchantActivity. Intents are how actions
+        // are conveyed in Android both between applications and inside of an application. Here
+        // Android will create a MerchantActivity in response to this intent.
+        Intent intent = new Intent(DirectoryActivity.this, MerchantActivity.class);
+        // Pass along our selected user in JSON string form as an extra. We'll read this on the
+        // other side.
+        intent.putExtra("user", userString);
+
+        // And go!
+        startActivity(intent);
+      }
+    });
   }
 }

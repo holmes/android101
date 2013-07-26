@@ -59,5 +59,10 @@
         android:label="@string/login_activity"
         />
 
+    <!--
+      - The activity for displaying the data for and opening a tab at a single merchant.
+      -->
+    <activity android:name=".ui.MerchantActivity"/>
+
   </application>
 </manifest>

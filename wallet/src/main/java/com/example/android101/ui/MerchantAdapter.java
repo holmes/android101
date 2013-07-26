@@ -5,23 +5,36 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.example.android101.R;
-import com.example.android101.data.MockData;
 import com.example.android101.data.model.User;
 import com.example.android101.util.BindableAdapter;
 import com.example.android101.util.SquaredImageView;
 import com.squareup.picasso.Picasso;
+import java.util.Collections;
+import java.util.List;
 
 public class MerchantAdapter extends BindableAdapter<User> {
+  private List<User> users;
+
   public MerchantAdapter(DirectoryActivity directoryActivity) {
     super(directoryActivity);
+    // Start with an empty list. This allows us to avoid null checks and special casing.
+    users = Collections.emptyList();
+  }
+
+  /**
+   * Replace the current user list with a new one. Callers are responsible for calling {@link
+   * #notifyDataSetChanged()}
+   */
+  public void setUsers(List<User> users) {
+    this.users = users;
   }
 
   @Override public int getCount() {
-    return MockData.MERCHANTS.length;
+    return users.size();
   }
 
   @Override public User getItem(int position) {
-    return MockData.MERCHANTS[position];
+    return users.get(position);
   }
 
   @Override public long getItemId(int position) {
